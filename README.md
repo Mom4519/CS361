@@ -1,2 +1,10 @@
-- [ ] test unfinished 
-- [x] test finished task
+- [ ]  Calculate TS%
+- [ ] look up player by name
+- [ ]  team stat leader
+- [ ]  season stat leader
+- [ ]  playoff stat leader
+- [ ]  playoff stat leader specific team
+- [ ]  finals teams for a specific year
+- [ ]  finals stats leaders
+- [ ] championships leaderboard
+- [ ] MVP leaderboard
