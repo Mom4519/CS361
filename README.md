@@ -1,6 +1,5 @@
 PRODUCT BACKLOG
 - [ ]  Calculate TS%
-- [ ] look up player by name
 - [ ]  team stat leader
 - [ ]  season stat leader
 - [ ]  playoff stat leader
@@ -9,3 +8,9 @@ PRODUCT BACKLOG
 - [ ]  finals stats leaders
 - [ ] championships leaderboard
 - [ ] MVP leaderboard
+
+
+SPRINT #1 
+- [ ] Player look up 
+- [ ] UI
+- [ ] file I/O 
