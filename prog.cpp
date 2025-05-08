@@ -111,25 +111,25 @@ void api_call(){
     string input = ask_number("1 to run the program 2 to quit\n");
     if(input == "1"){
            
-        ofstream MyWriteFile("prng-service.txt");
+        ofstream MyWriteFile("Stats_api.txt");
 
         MyWriteFile << "run";
         MyWriteFile.close();
         sleep(3);
 
-        ifstream MyReadFile("prng-service.txt");
+        ifstream MyReadFile("Stats_api.txt");
         string myText;
         getline (MyReadFile, myText);
         MyReadFile.close();
 
         int num = stoi(myText);
 
-        ofstream MyWriteFileIM("image-service.txt");
+        ofstream MyWriteFileIM("gussing_game.txt");
         MyWriteFileIM << myText;
         MyWriteFileIM.close();
         sleep(3);
 
-        ifstream MyReadFileIM("image-service.txt");
+        ifstream MyReadFileIM("gussing_game.txt");
         getline (MyReadFileIM, myText);
         printf("%s\n", myText.c_str());
 
@@ -139,8 +139,8 @@ void api_call(){
         
     }
     else if(input == "2"){
-        ofstream MyWriteFileIM("image-service.txt");
-        ofstream MyWriteFile("prng-service.txt");
+        ofstream MyWriteFileIM("gussing_game.txt");
+        ofstream MyWriteFile("Stats_api.txt");
         MyWriteFileIM << "quit";
         MyWriteFile << "quit";
         MyWriteFile.close();
