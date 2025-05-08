@@ -14,7 +14,7 @@ void print_list() {
     printf("Please select an option:\n");
     printf("Answer with the corresponding Number\n");
     printf("----------------------------------------\n");
-    printf("1. True Shooting calculator\n");
+    printf("1. Calculator home\n");
     printf("2. Stat Search Functions\n");
     printf("3. Guess the player Game\n");
     printf("4. Goat Leaderboards\n");
