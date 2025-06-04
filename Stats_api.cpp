@@ -26,6 +26,22 @@ struct NBAPlayer {
     float orb, drb, trb;
     float ast, stl, blk;
     float tov, pf, pts;
+
+    string toCSVRow() const {
+    ostringstream ss;
+    ss << rank << "," << player << "," << age << "," << team << "," << position << ","
+       << games << "," << gamesStarted << "," << minutes << ","
+       << fg << "," << fga << "," << fgPercent << ","
+       << threeP << "," << threePA << "," << threePPercent << ","
+       << twoP << "," << twoPA << "," << twoPPercent << ","
+       << efgPercent << "," << ft << "," << fta << "," << ftPercent << ","
+       << orb << "," << drb << "," << trb << ","
+       << ast << "," << stl << "," << blk << ","
+       << tov << "," << pf << "," << pts;
+    return ss.str();
+}
+
+
 };
 
 NBAPlayer getPlayerByName(const string& name, const unordered_map<string, NBAPlayer>& playersByName) {
@@ -36,6 +52,16 @@ NBAPlayer getPlayerByName(const string& name, const unordered_map<string, NBAPla
         throw runtime_error("Player not found: " + name);
     }
 }
+
+NBAPlayer getPlayerByRank(int rank, const unordered_map<int, NBAPlayer>& playersByRank) {
+    auto it = playersByRank.find(rank);
+    if (it != playersByRank.end()) {
+        return it->second;
+    } else {
+        throw runtime_error("Player not found with rank: " + to_string(rank));
+    }
+}
+
 
 float safe_stof(const string& s) {
     try {
@@ -158,18 +184,18 @@ void printPlayer(const NBAPlayer& p) {
          << "Games: " << p.games << ", Total Points: " << p.pts << ", PPG: " << ppg << "\n";
 }
 
-void printTeamStats(const string& team, const unordered_map<string, vector<NBAPlayer>>& teamMap) {
+void printTeamStats(const string& team, const unordered_map<string, vector<NBAPlayer>>& teamMap, ofstream& outFile) {
     if (teamMap.find(team) == teamMap.end()) {
-        cout << "Team not found.\n";
+        outFile << "Team not found.\n";
         return;
     }
 
     const vector<NBAPlayer>& roster = teamMap.at(team);
-    cout << "=== " << team << " Roster ===\n";
+    outFile << "=== " << team << " Roster ===\n";
 
     for (const NBAPlayer& p : roster) {
         float ppg = (p.games > 0) ? p.pts : 0.0f;
-        cout << p.player << " | Games: " << p.games << " | PPG: " << ppg << "\n";
+        outFile << p.player << " | Games: " << p.games << " | PPG: " << ppg << "\n";
     }
 }
 
@@ -201,20 +227,40 @@ int main(){
                 outFile << p.player << " Stats: " << p.pts << ", " << p.ast << ", " << p.trb << "\n";
                 outFile.close();
             } catch (const exception& e) {
-                cerr << e.what() << "\n";
+                ofstream outFile("Calculator.txt");
+                outFile << "Player Not Found" << "\n";
+                outFile.close();
             }
-            // ofstream outFile("Calculator.txt");
-            // outFile << p.player << " Stats: " << p.pts << ", " << p.ast << ", " << p.trb << "\n";
-
+            
         }
         else if (myText == "runE "){
             ifstream MyReadFile("Calculator.txt");
             getline (MyReadFile, myText);
+            getline (MyReadFile, myText);
+            MyReadFile.close();
             try {
                 string team = myText; // Example team
-                printTeamStats(team, teamMap);
+                ofstream outFile("Calculator.txt");
+                printTeamStats(team, teamMap, outFile);
             } catch (const exception& e) {
                 cerr << e.what() << "\n";
+            }
+        }
+        else if (myText == "rank"){
+            fstream MyReadFile("Calculator.txt");
+            getline (MyReadFile, myText);
+            getline (MyReadFile, myText);
+            MyReadFile.close();
+            try {
+                int rank = stoi(myText);
+                NBAPlayer p = getPlayerByRank( rank, rankMap);
+                ofstream outFile("Calculator.txt");
+                outFile << p.toCSVRow() << "\n";
+                outFile.close();
+            } catch (const exception& e) {
+                ofstream outFile("Calculator.txt");
+                outFile << "Player Not Found" << "\n";
+                outFile.close();
             }
         }
         else if (myText == "quit"){

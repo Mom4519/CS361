@@ -3,7 +3,9 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <fstream>
-
+#include <sstream>
+#include <vector>
+#include <unordered_map>
 
 #include <string>
 
@@ -28,8 +30,97 @@ struct NBAPlayer {
     float tov, pf, pts;
 };
 
+// Function to guess the player's team
+void guessTeam(const NBAPlayer& player) {
+    string guess;
+    cout << "Guess the team of this player: " << player.player << endl;
+    cin.ignore();
+    getline(cin, guess);
+
+    if (guess == player.team) {
+        cout << "Correct! " << player.player << " plays for the " << player.team << ".\n";
+    } else {
+        cout << "Wrong! " << player.player << " plays for the " << player.team << ".\n";
+    }
+}
+
+// Function to guess the player's name
+void guessPlayer(const NBAPlayer& player) {
+    string guess;
+    cout << "Guess the name of the player on this team: " << player.team << endl;
+    cin.ignore();
+    getline(cin, guess);
+
+    if (guess == player.player) {
+        cout << "Correct! The player is " << player.player << ".\n";
+    } else {
+        cout << "Wrong! The correct answer is " << player.player << ".\n";
+    }
+}
+
+float safe_stof(const string& s) {
+    try {
+        return stof(s);
+    } catch (...) {
+        return 0.0f;
+    }
+}
+
+int safe_stoi(const string& s) {
+    try {
+        return stoi(s);
+    } catch (const invalid_argument& e) {
+        //cerr << "Warning: invalid int value: '" << s << "', defaulting to 0\n";
+        return 0;
+    } catch (const out_of_range& e) {
+        cerr << "Warning: out-of-range int value: '" << s << "', defaulting to 0\n";
+        return 0;
+    }
+}
+
+void fromCSVRow(const string& csvLine, NBAPlayer& player) {
+    stringstream ss(csvLine);
+    string field;
+    vector<string> f;
+
+    while (getline(ss, field, ',')) {
+        f.push_back(field);
+    }
+
+    player.rank         = safe_stoi(f[0]);
+    player.player       = f[1];
+    player.age          = safe_stoi(f[2]);
+    player.team         = f[3];
+    player.position     = f[4];
+    player.games        = safe_stoi(f[5]);
+    player.gamesStarted = safe_stoi(f[6]);
+    player.minutes      = safe_stof(f[7]);
+    player.fg           = safe_stof(f[8]);
+    player.fga          = safe_stof(f[9]);
+    player.fgPercent    = safe_stof(f[10]);
+    player.threeP       = safe_stof(f[11]);
+    player.threePA      = safe_stof(f[12]);
+    player.threePPercent= safe_stof(f[13]);
+    player.twoP         = safe_stof(f[14]);
+    player.twoPA        = safe_stof(f[15]);
+    player.twoPPercent  = safe_stof(f[16]);
+    player.efgPercent   = safe_stof(f[17]);
+    player.ft           = safe_stof(f[18]);
+    player.fta          = safe_stof(f[19]);
+    player.ftPercent    = safe_stof(f[20]);
+    player.orb          = safe_stof(f[21]);
+    player.drb          = safe_stof(f[22]);
+    player.trb          = safe_stof(f[23]);
+    player.ast          = safe_stof(f[24]);
+    player.stl          = safe_stof(f[25]);
+    player.blk          = safe_stof(f[26]);
+    player.tov          = safe_stof(f[27]);
+    player.pf           = safe_stof(f[28]);
+    player.pts          = safe_stof(f[29]);
+}
+
 void print_list() {
-    printf("Welcome to the NBA Stats Program!\n");
+    printf("Welcome to the 2025 NBA Stats Program!\n");
     printf("Please select an option:\n");
     printf("Answer with the corresponding Number\n");
     printf("----------------------------------------\n");
@@ -112,68 +203,12 @@ string ask_number(string question) {
 }
 
 
-void api_call(){
-    // Placeholder for API call
-    printf("API call made.\n");
-    string input = ask_number("1 to run the program 2 to quit\n");
-    if(input == "1"){
-           
-        ofstream MyWriteFile("Stats_api.txt");
-
-        MyWriteFile << "run";
-        MyWriteFile.close();
-        sleep(3);
-
-        ifstream MyReadFile("Stats_api.txt");
-        string myText;
-        getline (MyReadFile, myText);
-        MyReadFile.close();
-
-        int num = stoi(myText);
-
-        ofstream MyWriteFileIM("gussing_game.txt");
-        MyWriteFileIM << myText;
-        MyWriteFileIM.close();
-        sleep(3);
-
-        ifstream MyReadFileIM("gussing_game.txt");
-        getline (MyReadFileIM, myText);
-        printf("%s\n", myText.c_str());
-
-        
-        
-        MyReadFileIM.close();
-        
-    }
-    else if(input == "2"){
-        ofstream MyWriteFileIM("gussing_game.txt");
-        ofstream MyWriteFile("Stats_api.txt");
-        MyWriteFileIM << "quit";
-        MyWriteFile << "quit";
-        MyWriteFile.close();
-        MyWriteFileIM.close();
-        
-    }
-    else{
-        printf("Plese pick 1 or 2");
-    }
-}
-
-// string list[5] = {"how many shots taken", "how many shots made", "how many 3pts made", "how many ft made", "how many ft taken"};
-    
-//     for (int i = 0; i < 5; i++) {
-//         string out = ask_number(list[i]);
-//         if (out == "exit") {
-//             printf("Exiting...\n");
-//             return 0;
-//         }
-//     }
 
 int main() {
     string input;
 
     input = ask_question(&print_list);
-    while (input != "5") {
+    while (input != "4") {
         
         switch (input[0]) {
             case '0':
@@ -182,7 +217,7 @@ int main() {
             case '1':
                
                 input = ask_question(&print_list_calc);
-                if (input == "5") input = '0';
+                if (input == "3") input = '0';
                 if (input == "1") {
                     input = "0";
                     float fga = num_str("Enter field goal attempts");
@@ -245,7 +280,7 @@ int main() {
                     cout << "Searching for player: " << name << endl;
                     ofstream MyWriteFile("Calculator.txt");
 
-                    MyWriteFile << "runE \n";
+                    MyWriteFile << "runT \n";
                     MyWriteFile << name;
                     MyWriteFile.close();
                     sleep(10);
@@ -270,18 +305,61 @@ int main() {
                     string team = ask_number("Enter the Team's Abrevation (EX: LAL, BOS):\n");
                     ofstream MyWriteFile("Calculator.txt");
 
-                    MyWriteFile << "runT \n";
+                    MyWriteFile << "runE \n";
                     MyWriteFile << team;
                     MyWriteFile.close();
                     sleep(10);
-                
+                    
+                    ifstream MyReadFile("Calculator.txt");
+                string myText;
+
+                while (getline(MyReadFile, myText)) {
+                    cout << myText << endl;  // or send this to another microservice
                 }
-                if (input == "5") input = '0';
+                cout << "----------------------------------------\n";
+                MyReadFile.close();
+
+                // Clear the file after reading
+                ofstream MyCloseFile("Calculator.txt", ios::trunc);
+                MyCloseFile.close();
+
+                }
+                if (input == "3") input = '0';
                 break;
             case '3':
                
                 input = ask_question(&print_list_games);
-                if (input == "5") input = '0';
+                if(input == "1"){
+                    ofstream MyWriteFile("gussing.txt");
+
+                    MyWriteFile << "player \n";
+                    MyWriteFile.close();
+                    sleep(10);
+
+                    ifstream MyReadFile("gussing.txt");
+                    string myText;
+                    getline (MyReadFile, myText);
+                    MyReadFile.close();
+                    NBAPlayer p;
+                    fromCSVRow(myText, p);
+                    guessPlayer(p);
+                }
+                if(input == "2"){
+                    ofstream MyWriteFile("gussing.txt");
+
+                    MyWriteFile << "team \n";
+                    MyWriteFile.close();
+                    sleep(10);
+
+                    ifstream MyReadFile("gussing.txt");
+                    string myText;
+                    getline (MyReadFile, myText);
+                    MyReadFile.close();
+                    NBAPlayer p;
+                    fromCSVRow(myText, p);
+                    guessTeam(p);
+                }
+                if (input == "3") input = '0';
                 break;
             
             case '4':
