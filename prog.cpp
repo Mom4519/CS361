@@ -9,6 +9,25 @@
 
 using namespace std;
 
+struct NBAPlayer {
+    int rank;
+    string player;
+    int age;
+    string team;
+    string position;
+    int games;
+    int gamesStarted;
+    float minutes;
+    float fg, fga, fgPercent;
+    float threeP, threePA, threePPercent;
+    float twoP, twoPA, twoPPercent;
+    float efgPercent;
+    float ft, fta, ftPercent;
+    float orb, drb, trb;
+    float ast, stl, blk;
+    float tov, pf, pts;
+};
+
 void print_list() {
     printf("Welcome to the NBA Stats Program!\n");
     printf("Please select an option:\n");
@@ -17,8 +36,7 @@ void print_list() {
     printf("1. Calculator home\n");
     printf("2. Stat Search Functions\n");
     printf("3. Guess the player Game\n");
-    printf("4. Goat Leaderboards\n");
-    printf("5. Exit\n");
+    printf("4. Exit\n");
     printf("----------------------------------------\n");
 };
 
@@ -27,11 +45,9 @@ void print_list_calc() {
     printf("Please select an option:\n");
     printf("Answer with the corresponding Number\n");
     printf("----------------------------------------\n");
-    printf("1. True Shooting (6 inputs)\n");
-    printf("2. EFG% (4 inputs)\n");
-    printf("3. BMP\n");
-    printf("4. WS\n");
-    printf("5. Exit\n");
+    printf("1. True Shooting - 6 inputs\n");
+    printf("2. EFG - 4 inputs\n");
+    printf("3. Exit\n");
     printf("----------------------------------------\n");
 };
 
@@ -41,12 +57,8 @@ void print_list_stats() {
     printf("Answer with the corresponding Number\n");
     printf("----------------------------------------\n");
     printf("1. Look up player by name\n");
-    printf("2. Team stat leader\n");
-    printf("3. Season stat leader\n");
-    printf("4. Playoff stat leader\n");
-    printf("5. All time stat leader\n");
-    printf("6. Finals stat leader\n");
-    printf("5. Exit\n");
+    printf("2. Team stat search\n");
+    printf("3. Exit\n");
     printf("----------------------------------------\n");
 };
 
@@ -57,24 +69,11 @@ void print_list_games() {
     printf("----------------------------------------\n");
     printf("1. Guess the Player\n");
     printf("2. Guess the Team\n");
-    printf("3. Guess the Nickname\n");
-    printf("4. Guess the Coach\n");
-    printf("5. Exit\n");
+    printf("3. Exit\n");
     printf("----------------------------------------\n");
 };
 
-void print_list_goats() {
-    printf("You selected Goat Leaderboards\n");
-    printf("Please select an option:\n");
-    printf("Answer with the corresponding Number\n");
-    printf("----------------------------------------\n");
-    printf("1. Championship leaderboard\n");
-    printf("2. MVP leaderboard\n");
-    printf("3. Scoring Champions\n");
-    printf("4. DPOY leaderboard\n");
-    printf("5. Exit\n");
-    printf("----------------------------------------\n");
-};
+
 
 float TS(float fga, float fgm, float tpa, float tpm, float ftm, float fta) {
     if (fga == 0) {
@@ -90,6 +89,13 @@ float EFG(float fga, float fgm, float tpa, float tpm){
     return ((fgm + (0.5 * tpm)) / fga);
 }
 
+int num_str(string str){
+    int x;
+    cout << str << endl;
+    cin >> x; 
+    return x;  
+}
+
 string ask_question(void(*func)()) {
     string out;
     func();
@@ -100,7 +106,8 @@ string ask_question(void(*func)()) {
 string ask_number(string question) {
     string out;
     printf("%s", question.c_str());
-    cin >> out;
+    cin.ignore();
+    getline(cin, out);
     return out;
 }
 
@@ -177,27 +184,98 @@ int main() {
                 input = ask_question(&print_list_calc);
                 if (input == "5") input = '0';
                 if (input == "1") {
-                    float fga = stof(ask_number("How many shots taken?\n"));
-                    float fgm = stof(ask_number("How many shots made?\n"));
-                    float tpa = stof(ask_number("How many 3pts taken?\n"));
-                    float tpm = stof(ask_number("How many 3pts made?\n"));
-                    float fta = stof(ask_number("How many free throws taken?\n"));
-                    float ftm = stof(ask_number("How many free throws made?\n"));
-                    printf("True Shooting %.2f\n", TS(fga, fgm, tpa, tpm, ftm, fta));
+                    input = "0";
+                    float fga = num_str("Enter field goal attempts");
+                    float fgm = num_str("Enter field goals made");
+                    float tpa = num_str("Enter three point attempts");
+                    float tpm = num_str("Enter three point made");
+                    float fta = num_str("Enter free throws attempts");
+                    float ftm = num_str("Enter free throws made");
+                    
+                    
+                    ofstream MyWriteFile("Calculator.txt");
+
+                    MyWriteFile << "runE \n";
+                    MyWriteFile << fga << "," << fgm << "," << tpa << "," << tpm << "," << fta << "," << ftm;
+                    MyWriteFile.close();
+                    sleep(10);
+
+                    ifstream MyReadFile("Calculator.txt");
+                    string myText;
+                    getline (MyReadFile, myText);
+                    //printf("%s\n", myText.c_str());
+                    MyReadFile.close();
+
+                    float num = stof(myText);
+
+                    printf("Effective Field Goal Percentage %.2f\n", num);
                 }
                 if (input == "2") {
-                    float fga = stof(ask_number("How many shots taken?\n"));
-                    float fgm = stof(ask_number("How many shots made?\n"));
-                    float tpa = stof(ask_number("How many 3pts taken?\n"));
-                    float tpm = stof(ask_number("How many 3pts made?\n"));
-                    float fta = stof(ask_number("How many free throws taken?\n"));
-                    float ftm = stof(ask_number("How many free throws made?\n"));
-                    printf("Effective Field Goal Percentage %.2f\n", EFG(fga, fgm, tpa, tpm));
+                    input = "0";
+                    float fga = num_str("Enter field goal attempts");
+                    float fgm = num_str("Enter field goals made");
+                    float tpa = num_str("Enter three point attempts");
+                    float tpm = num_str("Enter three point made");
+                    
+                    ofstream MyWriteFile("Calculator.txt");
+
+                    MyWriteFile << "runT \n";
+                    MyWriteFile << fga << "," << fgm << "," << tpa << "," << tpm;
+                    MyWriteFile.close();
+                    sleep(10);
+
+                    ifstream MyReadFile("Calculator.txt");
+                    string myText;
+                    getline (MyReadFile, myText);
+                    //printf("%s\n", myText.c_str());
+                    MyReadFile.close();
+
+                    float num = stof(myText);
+
+                    printf("Effective Field Goal Percentage %.2f\n", num);
                 }
                 break;
             case '2':
                 
                 input = ask_question(&print_list_stats);
+                //player 
+                if (input == "1"){
+                    input = "0";
+                    string name = ask_number("Enter the player's name (make sure its full name case sensitive):\n");
+                    cout << "Searching for player: " << name << endl;
+                    ofstream MyWriteFile("Calculator.txt");
+
+                    MyWriteFile << "runE \n";
+                    MyWriteFile << name;
+                    MyWriteFile.close();
+                    sleep(10);
+
+                    ifstream MyReadFile("Calculator.txt");
+                    string myText;
+                    getline (MyReadFile, myText);
+                    //printf("%s\n", myText.c_str());
+                    cout << myText << endl;
+                    MyReadFile.close();
+                    //clear file
+                    ofstream MyCloseFile("Calculator.txt", std::ios::trunc);
+                    MyCloseFile.close();
+
+                    
+
+                    //printf("Player Stats: \n%s\n", myText.c_str());
+                }
+                //team
+                if (input == "2") {
+                    input = "0";
+                    string team = ask_number("Enter the Team's Abrevation (EX: LAL, BOS):\n");
+                    ofstream MyWriteFile("Calculator.txt");
+
+                    MyWriteFile << "runT \n";
+                    MyWriteFile << team;
+                    MyWriteFile.close();
+                    sleep(10);
+                
+                }
                 if (input == "5") input = '0';
                 break;
             case '3':
@@ -205,12 +283,8 @@ int main() {
                 input = ask_question(&print_list_games);
                 if (input == "5") input = '0';
                 break;
+            
             case '4':
-                
-                input = ask_question(&print_list_goats);
-                if (input == "5") input = '0';
-                break;
-            case '5':
                 printf("Exiting...\n");
                 break;
             default:
